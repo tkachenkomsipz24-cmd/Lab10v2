@@ -10,10 +10,6 @@ var courses = DataSeed.GetCourses();
 var students = DataSeed.GetStudents();
 var summary = new List<(string Title, double QueryMs, double MethodMs)>();
 
-// ---------------------------------------------------------------
-// Запит 1. Студенти віком до 20 років, що навчаються на курсі
-//          "Programming Basics"
-// ---------------------------------------------------------------
 Run(
     "Запит 1: студенти до 20 років на курсі \"Programming Basics\"",
     querySyntax: () =>
@@ -29,9 +25,6 @@ Run(
             .ToList(),
     print: list => list.ForEach(s => Console.WriteLine($"  {s}")));
 
-// ---------------------------------------------------------------
-// Запит 2. Об'єднання студентів з курсами: ім'я студента + назва курсу
-// ---------------------------------------------------------------
 Run(
     "Запит 2: студенти разом з назвами курсів (Join)",
     querySyntax: () =>
@@ -45,9 +38,6 @@ Run(
             .ToList(),
     print: list => list.ForEach(x => Console.WriteLine($"  {x.StudentName,-22} -> {x.CourseTitle}")));
 
-// ---------------------------------------------------------------
-// Запит 3. Кількість студентів на кожному курсі (GroupBy + Count)
-// ---------------------------------------------------------------
 Run(
     "Запит 3: кількість студентів на кожному курсі (GroupBy)",
     querySyntax: () =>
@@ -63,9 +53,6 @@ Run(
             .ToList(),
     print: list => list.ForEach(x => Console.WriteLine($"  {x.CourseTitle,-20} : {x.Count}")));
 
-// ---------------------------------------------------------------
-// Запит 4. Найстарший студент
-// ---------------------------------------------------------------
 Run(
     "Запит 4: найстарший студент",
     querySyntax: () =>
@@ -75,9 +62,6 @@ Run(
     methodSyntax: () => students.MaxBy(s => s.Age)!,
     print: s => Console.WriteLine($"  {s}"));
 
-// ---------------------------------------------------------------
-// Підсумкова таблиця
-// ---------------------------------------------------------------
 Console.WriteLine();
 Console.WriteLine($"=== Підсумок (середній час одного виконання, {Iterations:N0} повторів) ===");
 Console.WriteLine($"{"Запит",-62} {"Query, мс",12} {"Method, мс",12}");
@@ -88,11 +72,8 @@ var slowest = summary.OrderByDescending(x => Math.Max(x.QueryMs, x.MethodMs)).Fi
 Console.WriteLine();
 Console.WriteLine($"Найдорожчий за часом запит: {slowest.Title}");
 
-// ===============================================================
-// Допоміжні методи
-// ===============================================================
 void Run<T>(string title, Func<T> querySyntax, Func<T> methodSyntax, Action<T> print)
-{
+{ 
     Console.WriteLine();
     Console.WriteLine($"=== {title} ===");
 
