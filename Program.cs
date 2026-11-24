@@ -15,12 +15,12 @@ Run(
     querySyntax: () =>
         (from s in students
          join c in courses on s.CourseId equals c.Id
-         where s.Age <= 20 && c.Title == "Programming Basics"
+         where s.Age < 20 && c.Title == "Programming Basics"
          select s).ToList(),
     methodSyntax: () =>
         students
             .Join(courses, s => s.CourseId, c => c.Id, (s, c) => new { s, c })
-            .Where(x => x.s.Age <= 20 && x.c.Title == "Programming Basics")
+            .Where(x => x.s.Age < 20 && x.c.Title == "Programming Basics")
             .Select(x => x.s)
             .ToList(),
     print: list => list.ForEach(s => Console.WriteLine($"  {s}")));
@@ -54,12 +54,12 @@ Run(
     print: list => list.ForEach(x => Console.WriteLine($"  {x.CourseTitle,-20} : {x.Count}")));
 
 Run(
-    "Запит 4: найстарший студент",
+    "Запит 4: наймолодший студент",
     querySyntax: () =>
         (from s in students
-         orderby s.Age descending
+         orderby s.Age
          select s).First(),
-    methodSyntax: () => students.MaxBy(s => s.Age)!,
+    methodSyntax: () => students.MinBy(s => s.Age)!,
     print: s => Console.WriteLine($"  {s}"));
 
 Console.WriteLine();
@@ -73,11 +73,10 @@ Console.WriteLine();
 Console.WriteLine($"Найдорожчий за часом запит: {slowest.Title}");
 
 void Run<T>(string title, Func<T> querySyntax, Func<T> methodSyntax, Action<T> print)
-{ 
+{
     Console.WriteLine();
     Console.WriteLine($"=== {title} ===");
 
-    // Одиничне вимірювання (включає JIT-компіляцію, тому перший виклик найповільніший)
     var sw = Stopwatch.StartNew();
     var resQuery = querySyntax();
     sw.Stop();
@@ -94,7 +93,6 @@ void Run<T>(string title, Func<T> querySyntax, Func<T> methodSyntax, Action<T> p
     print(resMethod);
     Console.WriteLine($"Перший виклик: query = {firstQuery:F4} мс, method = {firstMethod:F4} мс");
 
-    // Усереднене вимірювання після "прогріву"
     double avgQuery = Benchmark(querySyntax);
     double avgMethod = Benchmark(methodSyntax);
     Console.WriteLine($"Середнє ({Iterations:N0} повторів): query = {avgQuery:F6} мс, method = {avgMethod:F6} мс");
@@ -104,7 +102,7 @@ void Run<T>(string title, Func<T> querySyntax, Func<T> methodSyntax, Action<T> p
 
 double Benchmark<T>(Func<T> action)
 {
-    for (int i = 0; i < 1000; i++) action(); // прогрів
+    for (int i = 0; i < 1000; i++) action();
 
     var sw = Stopwatch.StartNew();
     for (int i = 0; i < Iterations; i++) action();
